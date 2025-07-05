@@ -127,7 +127,7 @@ npx playwright show-report
 **Peter Lukic**
 
 GitHub: [@PeterLukic](https://github.com/PeterLukic)
-LinkedIN: [@PeterLukic](https://github.com/PeterLukic)
+LinkedIN: [@PeterLukic](https://www.linkedin.com/in/peter-luki%C4%87-6bb79382/)
 
 ---
 
