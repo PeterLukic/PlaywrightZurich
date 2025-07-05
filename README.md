@@ -72,6 +72,7 @@ npx playwright show-report
 ├─ package.json             # Project metadata and scripts
 ├─ playwright.config.ts     # Playwright configuration
 ├─ .gitignore               # Files and folders to ignore in git
+├─ .README.md               # Documentation
 ```
 
 ---
