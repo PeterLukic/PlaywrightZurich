@@ -14,7 +14,7 @@ Feature: OrangeHRM Login
     And I click the login button
     Then I should be redirected to the page dashboard
 
-  @ui @smoke @positive1
+  @ui @smoke @positive
   Scenario: Login with demo credentials
     When I login with the demo credentials
     Then I should be redirected to the page dashboard

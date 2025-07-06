@@ -29,8 +29,8 @@ export class PageDashboard {
     async assertDashboardPage(): Promise<void> {
         await expect(this.titleDashboard).toHaveText('Dashboard');
 
-        //await expect(this.tableTimeAtWork).toBeVisible();
-        //await expect(this.tableTimeAtWork).toHaveText('Time at Work');
+        await expect(this.tableTimeAtWork).toBeVisible();
+        await expect(this.tableTimeAtWork).toHaveText('Time at Work');
 
         await expect(this.tableMyActions).toBeVisible();
         await expect(this.tableMyActions).toHaveText('My Actions');
