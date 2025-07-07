@@ -8,18 +8,18 @@ test.describe('Petstore API', () => {
     await Then('the response should be successful'); 
   });
 
-  test('Retrieve pets with status \'pending\'', { tag: ['@api', '@getPending'] }, async ({ Given, When, playwright, Then, And }) => { 
+  test('Retrieve pets with status \'pending\'', { tag: ['@api', '@getPending'] }, async ({ Given, When, Then, And }) => { 
     await Given('I have access to the Petstore API'); 
-    await When('I request pets with status "pending"', null, { playwright }); 
+    await When('I request pets with status "pending"'); 
     await Then('the response status code should be 200'); 
     await And('the response should be successful'); 
     await And('the response should contain a list of pets'); 
     await And('all pets in the list should have status "pending"'); 
   });
 
-  test('Retrieve pets with status \'available\'', { tag: ['@api', '@getAvailable'] }, async ({ Given, When, playwright, Then, And }) => { 
+  test('Retrieve pets with status \'available\'', { tag: ['@api', '@getAvailable'] }, async ({ Given, When, Then, And }) => { 
     await Given('I have access to the Petstore API'); 
-    await When('I request pets with status "available"', null, { playwright }); 
+    await When('I request pets with status "available"'); 
     await Then('the response status code should be 200'); 
     await And('the response should be successful'); 
     await And('the response should contain a list of pets'); 
@@ -28,27 +28,27 @@ test.describe('Petstore API', () => {
 
   test.describe('Retrieve pets with status \'<status>\'', () => {
 
-    test('Retrieve pets with status \'pending\'', { tag: ['@api', '@getPetsByStatus'] }, async ({ Given, When, playwright, Then, And }) => { 
+    test('Retrieve pets with status \'pending\'', { tag: ['@api', '@getPetsByStatus'] }, async ({ Given, When, Then, And }) => { 
       await Given('I have access to the Petstore API'); 
-      await When('I request pets with status "pending"', null, { playwright }); 
+      await When('I request pets with status "pending"'); 
       await Then('the response status code should be 200'); 
       await And('the response should be successful'); 
       await And('the response should contain a list of pets'); 
       await And('all pets in the list should have status "pending"'); 
     });
 
-    test('Retrieve pets with status \'available\'', { tag: ['@api', '@getPetsByStatus'] }, async ({ Given, When, playwright, Then, And }) => { 
+    test('Retrieve pets with status \'available\'', { tag: ['@api', '@getPetsByStatus'] }, async ({ Given, When, Then, And }) => { 
       await Given('I have access to the Petstore API'); 
-      await When('I request pets with status "available"', null, { playwright }); 
+      await When('I request pets with status "available"'); 
       await Then('the response status code should be 200'); 
       await And('the response should be successful'); 
       await And('the response should contain a list of pets'); 
       await And('all pets in the list should have status "available"'); 
     });
 
-    test('Retrieve pets with status \'sold\'', { tag: ['@api', '@getPetsByStatus'] }, async ({ Given, When, playwright, Then, And }) => { 
+    test('Retrieve pets with status \'sold\'', { tag: ['@api', '@getPetsByStatus'] }, async ({ Given, When, Then, And }) => { 
       await Given('I have access to the Petstore API'); 
-      await When('I request pets with status "sold"', null, { playwright }); 
+      await When('I request pets with status "sold"'); 
       await Then('the response status code should be 200'); 
       await And('the response should be successful'); 
       await And('the response should contain a list of pets'); 

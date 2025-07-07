@@ -1,127 +1,105 @@
 import { Given, When, Then } from '../../support/fixtures';
-import { expect, request } from '@playwright/test';
-import data from '../../../utils/data.json';
-import { validPetData, invalidPetData } from '../../../utils/petData';
-import axios from 'axios';
+import { expect } from '@playwright/test';
 import assert from 'assert';
 
-let apiResponse: any;
-let responseBody: any;
-let petData: any;
-let responseUpdatePet: any;
-let responseDeletePet: any;
-let responseAddPet: any;
+import { PetstoreApiHelper } from '../../support/petstoreApiHelper';
+import { validPetData, invalidPetData } from '../../../utils/petData';
 
+let response: any;
+let petData: any;
 
 When('I make a GET request to the Petstore API swagger.json endpoint', async () => {
-    const req = await request.newContext();
-    apiResponse = await req.get(`${data.api.petstoreSwaggerBaseUrl}/swagger.json`);
-})
+  response = await PetstoreApiHelper.getSwaggerJson();
+});
 
 Then('the response should be successful', async () => {
-    expect(apiResponse.ok()).toBeTruthy();
-})
+  expect(response.status).toBe(200);
+});
 
 Given('I have access to the Petstore API', async () => {
-    console.log('Accessing Petstore API...')
-})
+  console.log('Accessing Petstore API...');
+});
 
-When('I request pets with status {string}', async ({ playwright }, status: string) => {
 
-    const apiContext = await playwright.request.newContext();
-    apiResponse = await apiContext.get(`${data.api.petstoreSwaggerBaseUrl}/pet/findByStatus?status=${status}`);
-    responseBody = await apiResponse.json();
+When('I request pets with status {string}', async ({}, status: string) => {
+  response = await PetstoreApiHelper.findPetsByStatus(status);
+});
 
-})
+Then('the response status code should be {int}', async ({}, statusCode: number) => {
+  expect(response.status).toBe(statusCode);
+});
 
-Then('the response status code should be {int}', async ({ }, statusCode: number) => {
-    expect(apiResponse.status()).toBe(statusCode);
-})
+Then('the response should contain a list of pets', () => {
+  expect(Array.isArray(response.data)).toBeTruthy();
+  expect(response.data.length).toBeGreaterThan(0);
+});
 
-Then('the response should contain a list of pets', async () => {
-    expect(Array.isArray(responseBody)).toBeTruthy();
-    expect(responseBody.length).toBeGreaterThan(0);
-})
 
-Then('all pets in the list should have status {string}', async ({ }, expectedStatus: string) => {
-    for (const pet of responseBody) {
-        expect(pet).toHaveProperty('status');
-        expect(pet.status).toBe(expectedStatus);
-    }
+Then('all pets in the list should have status {string}', ({}, expectedStatus: string) => {
+  for (const pet of response.data) {
+    expect(pet.status).toBe(expectedStatus);
+  }
 });
 
 Given('I have the pet data', () => {
-    petData = { ...validPetData };
+  petData = { ...validPetData };
 });
 
 Given('I have invalid pet data', () => {
-    petData = { ...invalidPetData };
+  petData = { ...invalidPetData };
 });
 
 When('I send a POST request to add the pet', async () => {
-    responseAddPet = await axios.post(`${data.api.petstoreSwaggerBaseUrl}/pet`, petData, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-})
+  response = await PetstoreApiHelper.addPet(petData);
+});
 
-Then('the response status should be {int}', async ({ }, statusCode: number) => {
-    assert.strictEqual(responseAddPet.status, statusCode);
-})
+Then('the response status should be {int}', async ({}, statusCode: number) => {
+  assert.strictEqual(response.status, statusCode);
+});
 
-Then('the response should contain the pet name {string}', async ({ }, petName: string) => {
-    expect(responseAddPet).toBeDefined();
-    expect(responseAddPet.data).toBeDefined();
-    expect(responseAddPet.data.name).toBe(petName);
-    console.log(`Pet added successfully with name: ${responseAddPet.data.name}`);
+
+Then('the response should contain the pet name {string}', async ({}, petName: string) => {
+  expect(response.data.name).toBe(petName);
 });
 
 When('I send the invalid POST request to add the pet', async () => {
-    try {
-        responseAddPet = await axios.post(`${data.api.petstoreSwaggerBaseUrl}/pet`, petData, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-    } catch (error: any) {
-        responseAddPet = error.response;
-        console.error('Error adding pet:', error.message);
-
-    }
-})
-
-Then('the response status should not be {int}', async ({ }, statusCode: number) => {
-    expect(responseAddPet.status).not.toBe(statusCode);
-    expect(responseAddPet.status).toBeGreaterThanOrEqual(400);
+  try {
+    response = await PetstoreApiHelper.addPet(petData);
+  } catch (error: any) {
+    response = error.response;
+  }
 });
 
-When('I update the pet name to {string}', ({ }, newName: string) => {
-    petData.name = newName;
+
+Then('the response status should not be {int}', async ({}, statusCode: number) => {
+  expect(response.status).not.toBe(statusCode);
+  expect(response.status).toBeGreaterThanOrEqual(400);
+});
+
+
+When('I update the pet name to {string}', ({}, newName: string) => {
+  petData.name = newName;
 });
 
 When('I send a PUT request to update the pet', async () => {
-    try {
-        responseUpdatePet = await axios.put(`${data.api.petstoreSwaggerBaseUrl}/pet`, petData, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-    } catch (error: any) {
-        responseUpdatePet = error.response;
-        console.error('Error during PUT:', error.message);
-    }
-})
+  try {
+    response = await PetstoreApiHelper.updatePet(petData);
+  } catch (error: any) {
+    response = error.response;
+  }
+});
 
-Then('the updated response should contain the pet name {string}', async ({ }, petName: string) => {
-    const response = responseUpdatePet || responseAddPet;
-    expect(response.data.name).toBe(petName);
-})
+
+Then('the updated response should contain the pet name {string}', async ({}, petName: string) => {
+  expect(response.data.name).toBe(petName);
+});
 
 When('I send a DELETE request to delete the pet with the pet id', async () => {
-    const petId = petData.id;
-    console.log(`Deleting pet with ID: ${petId}`);
-    responseDeletePet = await axios.delete(`${data.api.petstoreSwaggerBaseUrl}/pet/${petId}`, {
-        headers: { 'Content-Type': 'application/json' }
-    });
-})
+  const petId = petData.id;
+  response = await PetstoreApiHelper.deletePet(petId);
+});
 
-Then('the delete response status should be {int}', async ({ }, statusCode: number) => {
-    assert.equal(responseDeletePet.status, statusCode);
-})
+
+Then('the delete response status should be {int}', async ({}, statusCode: number) => {
+  expect(response.status).toBe(statusCode);
+});
